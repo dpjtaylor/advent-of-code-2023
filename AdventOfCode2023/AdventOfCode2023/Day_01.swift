@@ -12,10 +12,7 @@ import Foundation
 public func extractCalibrationValuev1(_ data: String) -> Int {
     let rows = data.split(whereSeparator: \.isNewline).map { String($0) }
     let rowValues = rows.map(extractCalibrationValueForRowv1)
-    let summed = rowValues.reduce(0) { sum, value in
-        sum + value
-    }
-    return summed
+    return rowValues.reduce(0, +)
 }
 
 private func extractCalibrationValueForRowv1(_ row: String) -> Int {
@@ -62,10 +59,7 @@ let digitText = allDigits.map(\.text)
 public func extractCalibrationValuev2(_ data: String) -> Int {
     let rows = data.split(whereSeparator: \.isNewline).map { String($0) }
     let rowValues = rows.map(extractCalibrationValueForRowv2)
-    let summed = rowValues.reduce(0) { sum, value in
-        sum + value
-    }
-    return summed
+    return rowValues.reduce(0, +)
 }
 
 private func extractCalibrationValueForRowv2(_ row: String) -> Int {

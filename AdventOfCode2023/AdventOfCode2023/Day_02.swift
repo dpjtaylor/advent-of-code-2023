@@ -70,15 +70,13 @@ public struct Game {
 extension Array where Element == Game {
     func sumIsPossible(blue: Int, green: Int, red: Int) -> Int {
         filter { $0.gamePossible(blue: blue, green: green, red: red) }
-            .reduce(0) { partialResult, game in
-                partialResult + game.id
-            }
+            .map(\.id)
+            .reduce(0, +)
     }
     
     var sumPower: Int {
-        reduce(0) { partialResult, game in
-            partialResult + game.power
-        }
+        map(\.power)
+            .reduce(0, +)
     }
 }
 
@@ -128,12 +126,14 @@ private extension String {
     }
 }
 
-private extension Array where Element == String {
-    
-}
-
 //Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
 //Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
 //Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
 //Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
 //Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green
+
+
+// MARK: Alternative
+// https://github.com/FieryFlames/AdventOfCode/blob/2023/Sources/Day02.swift
+// https://github.com/rizwankce/AdventOfCode/blob/master/2023/Sources/Day02.swift
+
