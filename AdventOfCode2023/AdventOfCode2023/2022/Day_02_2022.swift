@@ -82,22 +82,6 @@ struct RockPaperScissorsRound {
             return opponent.losesTo
         }
     }
-
-    // rock beats scissor - A Z = loss, C X = win
-    // paper beats rock - B X = loss, A Y = win
-    // scissor beats paper - C Y = loss, B Z = win
-    // Draw if same - A X, B Y, C Z
-    let roundPoints = [
-        "A C": 0 + 3,
-        "C A": 6 + 1,
-        "B A": 0 + 1,
-        "A B": 6 + 2,
-        "C B": 0 + 2,
-        "B C": 6 + 3,
-        "A A": 3 + 1,
-        "B B": 3 + 2,
-        "C C": 3 + 3,
-    ]
     
     // Opponent: A (rock), B (paper), C (scissors)
     // Response: X (rock), Y (paper), Z (scissors)

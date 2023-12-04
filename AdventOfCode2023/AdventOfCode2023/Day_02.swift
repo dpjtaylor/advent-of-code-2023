@@ -13,26 +13,6 @@ public struct Draw {
     public let blue: Int
     public let green: Int
     public let red: Int
-    
-    static func from(_ data: String) -> Draw {
-        let drawItems = data.split(separator: ",").map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
-        var blue: Int = 0
-        var green: Int = 0
-        var red: Int = 0
-        for drawItem in drawItems {
-            let scanner = Scanner(string: drawItem)
-            let number = scanner.scanInt()!
-            let color = scanner.scanUpToString(" ")
-            if color == "blue" {
-                blue = number
-            } else if color == "green" {
-                green = number
-            } else if color == "red" {
-                red = number
-            }
-        }
-        return Draw(blue: blue, green: green, red: red)
-    }
 }
 
 public struct Game {
@@ -81,11 +61,11 @@ extension Array where Element == Game {
 }
 
 public func extractGames(_ data: String) -> [Game] {
-    let rowData = data.split(whereSeparator: \.isNewline).map { String($0) }
+    let rowData = data.components(separatedBy: .newlines)
     var games = [Game]()
     for row in rowData {
         let (gameId, remainder) = row.extractGameIdAndRemainder
-        let drawData = remainder.split(separator: ";").map { String($0) }
+        let drawData = remainder.split(separator: ";").map(String.init)
         var draws = [Draw]()
         drawData.map(\.extractDraw)
             .forEach { draws.append($0) }
@@ -104,7 +84,6 @@ private extension String {
         return (gameId, remainder)
     }
     
-    // Move to method on Draw - draw(from: String) ?
     var extractDraw: Draw {
         let drawItems = split(separator: ",").map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
         var blue: Int = 0

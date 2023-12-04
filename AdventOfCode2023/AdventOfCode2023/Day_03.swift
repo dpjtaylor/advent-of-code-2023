@@ -34,45 +34,22 @@ struct Symbol {
     }
 }
 
-extension Array where Element == Symbol {
-    func isAdjacent(to part: Part, char: Character) -> Bool {
-        var isAdjacent = false
-        for symbol in filter({ $0.value != char }) {
-            isAdjacent = symbol.isAdjacent(to: part)
-            if isAdjacent {
-                break
-            }
-        }
-        return isAdjacent
-    }
-}
-
+// Refactoring of part I attempt to simplify after doing part II
 public func sumEnginePartsII(_ data: String) -> Int {
     let (parts, symbols) = extractComponents(data)
     
-    // Find adjacent symbols for parts
-    let includedParts = parts.filter { part in
-        symbols.isAdjacent(to: part, char: ".")
+    let nonDots = symbols.filter { $0.value != "." }
+    return parts.filter { part in
+        nonDots.filter { $0.isAdjacent(to: part)}.count > 0
     }
-    return includedParts
-        .map(\.value)
-        .reduce(0, +)
+    .map(\.value)
+    .reduce(0, +)
 }
 
 public func sumGearRatios(_ data: String) -> Int {
     let (parts, symbols) = extractComponents(data)
-  
-    // Alternative works but - compiler struggles with type checking
-//    let sum2 = symbols.filter({ $0.value == "*" })
-//        .map({ symbol in
-//            parts.filter( { $0.isAdjacent(to: symbol) })
-//        })
-//        .filter( { $0.count == 2 })
-//        .reduce(0) { sum, gearParts in
-//            sum + gearParts.map(\.value).reduce(1, *)
-//        }
-    
-    let sum = symbols.filter { $0.value == "*" } // [Symbol] - only '*'
+      
+    return symbols.filter { $0.value == "*" } // [Symbol] - only '*'
         .map { symbol in // Transform to [[Part]] of adjacent symbols
             parts.filter { $0.isAdjacent(to: symbol) }
         }
@@ -82,22 +59,6 @@ public func sumGearRatios(_ data: String) -> Int {
             gearParts.map(\.value).reduce(1, *)
         }
         .reduce(0, +) // sum up values in [Int]
-    
-//    var sum = 0
-//    gearSymbols.forEach { symbol in
-//        var adjacentParts = [Part]()
-//        parts.forEach { part in
-//            if part.isAdjacent(to: symbol) {
-//                adjacentParts.append(part)
-//            }
-//        }
-//        if adjacentParts.count == 2 {
-//            sum += adjacentParts
-//                .map(\.value)
-//                .reduce(1, *)
-//        }
-//    }
-    return sum
 }
 
 private func extractComponents(_ data: String) -> ([Part], [Symbol]){
@@ -134,7 +95,10 @@ private func extractComponents(_ data: String) -> ([Part], [Symbol]){
     return (parts, symbols)
 }
 
-public func sumEngineParts(_ data: String) -> Int {
+// MARK: - Earlier attempt at part I
+
+// First attempt at part I - for posterity!
+public func sumEngineParts_firstAttempt(_ data: String) -> Int {
     // Create [[Character]] multidimensional array to use as an x, y grid
     let matrix = data.components(separatedBy: .newlines)
         .map(Array.init)
@@ -191,9 +155,9 @@ public func sumEngineParts(_ data: String) -> Int {
 private func checkBoundaries(in matrix: [[Character]], xMin: Int, xMax: Int, yMin: Int, yMax: Int) -> Bool {
     // If all dots around then don't include number
     var shouldKeep = false
-    outerloop: for yScan in yMin...yMax {
-        for xScan in xMin...xMax {
-            let scanChar = matrix[yScan][xScan]
+    outerloop: for y in yMin...yMax {
+        for x in xMin...xMax {
+            let scanChar = matrix[y][x]
             if !scanChar.isNumber && scanChar != "." {
                 shouldKeep = true
                 break outerloop

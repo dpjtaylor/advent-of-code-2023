@@ -12,15 +12,15 @@ import XCTest
 final class Day03Tests: XCTestCase {
     
     func test_part1_sumEngineParts_sampleData() {
-        XCTAssertEqual(4_361, sumEngineParts(sampleData))
+        XCTAssertEqual(4_361, sumEnginePartsII(sampleData))
     }
     
     func test_part1_sumEngineParts_sampleDataPlusEndLine() {
-        XCTAssertEqual(4_419, sumEngineParts(sampleDataPlusEndOfLineNumber))
+        XCTAssertEqual(4_419, sumEnginePartsII(sampleDataPlusEndOfLineNumber))
     }
     
     func test_part1_sumEngineParts_puzzleInput() {
-        XCTAssertEqual(539_590, sumEngineParts(puzzleInput))
+        XCTAssertEqual(539_590, sumEnginePartsII(puzzleInput))
     }
     
     func test_part2_sumEngineParts_sampleData() {
@@ -37,8 +37,6 @@ final class Day03Tests: XCTestCase {
     
     // A gear is any * symbol that is adjacent to exactly two part numbers. Its gear ratio is the result of multiplying those two numbers together.
     
-    // add up all the part numbers
-    // any number adjacent to a symbol, even diagonally, is a "part number" and should be included in your sum. (Periods (.) do not count as a symbol.)
     let sampleDataExplore = """
     YYY  NNN
        *
@@ -52,47 +50,7 @@ final class Day03Tests: XCTestCase {
      YYY YYY
     """
     
-    // x = 2, y = 0 - special char at:
-    // x = 3, y = 0 (right)
-    // x = 2, y = 1 ()
-    // x = 3, y = 1 (diagnonal)
-    
-    // Parse  splash zone mask
-    // Remove characters not masked
-    // Parse numbers
-    let sampleDataExplore3 = """
-    YYY..NNN..    ..###.....
-    ...*......    ..#*#.....
-    ..YY..YYY.    ..######..
-    ......*...    ..####*#..
-    YYY*......    ..#*####..
-    .....*.NN.    ..###*#...
-    ..YYY.....    ..#####...
-    ......YYY.    ..#####...
-    ...*.*....    ..#*#*#...
-    .YYY.YYY..    ..#####...
-    """
-    
-    let sampleDataExplore2 = """
-    .......... // count if line above has special char in index 23456
-    ...345.... // number spans range 345 - if special char at index 2 or 6
-    .......... // count if line below has special char in index 23456
-    """
-    
-    let sampleDataExplore4 = """
-    YYY..NNN..
-    ...*......
-    ..YY..YYY.
-    ......*...
-    YYY*......
-    .....*.NN.
-    ..YYY.....
-    ......YYY.
-    ...*.*....
-    .YYY.YYY..
-    """
-    
-    // TODO: check single digit number at end of line
+    // Checking number at end of line (+58)
     let sampleDataPlusEndOfLineNumber = """
     467..114..
     ...*......
