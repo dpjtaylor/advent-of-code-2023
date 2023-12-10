@@ -2,7 +2,7 @@
 //  Day_05Tests.swift
 //  AdventOfCode2023Tests
 //
-//  Created by David Taylor on 08/12/2023.
+//  Created by David Taylor on 09/12/2023.
 //
 
 import Foundation
@@ -10,17 +10,6 @@ import XCTest
 @testable import AdventOfCode2023
 
 final class Day05Tests: XCTestCase {
-    // seeds: Seeds that need to be planted
-    // maps: source (e.g. seed number) to destination category (e.g. soil number)
-    // ranges: destination range start, source range start, range length
-    // e.g. 50 98 2 -> source range is 98, 99, destination range is 50 and 51
-    // seed 98 -> soil 50, seed 99 -> soil 51
-    //
-    // e.g. 52 50 48
-    // seed 50 -> soil 52, seed 97 -> soil 99
-    //
-    // soil numbers not mapped correspond to the same number
-    // seed 10 -> soil 10
     let sampleData = """
     seeds: 79 14 55 13
 
@@ -57,316 +46,136 @@ final class Day05Tests: XCTestCase {
     56 93 4
     """
     
-    // Find the lowest location number that corresponds to any of the initial seeds
-    //
-    // Seed 79, soil 81, fertilizer 81, water 81, light 74, temperature 78, humidity 78, location 82.
-    // Seed 14, soil 14, fertilizer 53, water 49, light 42, temperature 42, humidity 43, location 43.
-    // Seed 55, soil 57, fertilizer 57, water 53, light 46, temperature 82, humidity 82, location 86.
-    // Seed 13, soil 13, fertilizer 52, water 41, light 34, temperature 34, humidity 35, location 35.
     func test_part1_sampleData() {
         XCTAssertEqual(35, day05_part1(sampleData))
-    }
-    
-    func test_part1_extractSeeds() {
-        XCTAssertEqual([79, 14, 55, 13], extractSeeds("seeds: 79 14 55 13"))
-    }
-    
-    func test_part1_extractSeedMaps() {
-        let seedMaps = extractSeedMaps(sampleData)
-        XCTAssertEqual(7, seedMaps.count)
-        
-        // seed-to-soil map:
-        // 50 98 2
-        // 52 50 48
-        let seedToSoil = seedMaps[0]
-        XCTAssertEqual(2, seedToSoil.count)
-        XCTAssertEqual(SeedMap(sourceStart: 98, destinationStart: 50, rangeLength: 2), seedToSoil[0])
-        XCTAssertEqual(SeedMap(sourceStart: 50, destinationStart: 52, rangeLength: 48), seedToSoil[1])
-        
-        // soil-to-fertilizer map:
-        // 0 15 37
-        // 37 52 2
-        // 39 0 15
-        let soilToFertilizer = seedMaps[1]
-        XCTAssertEqual(3, soilToFertilizer.count)
-        XCTAssertEqual(SeedMap(sourceStart: 15, destinationStart: 0, rangeLength: 37), soilToFertilizer[0])
-        XCTAssertEqual(SeedMap(sourceStart: 52, destinationStart: 37, rangeLength: 2), soilToFertilizer[1])
-        XCTAssertEqual(SeedMap(sourceStart: 0, destinationStart: 39, rangeLength: 15), soilToFertilizer[2])
-        
-        // fertilizer-to-water map:
-        // 49 53 8
-        // 0 11 42
-        // 42 0 7
-        // 57 7 4
-        let fertilizerToWater = seedMaps[2]
-        XCTAssertEqual(4, fertilizerToWater.count)
-        XCTAssertEqual(SeedMap(sourceStart: 53, destinationStart: 49, rangeLength: 8), fertilizerToWater[0])
-        XCTAssertEqual(SeedMap(sourceStart: 11, destinationStart: 0, rangeLength: 42), fertilizerToWater[1])
-        XCTAssertEqual(SeedMap(sourceStart: 0, destinationStart: 42, rangeLength: 7), fertilizerToWater[2])
-        XCTAssertEqual(SeedMap(sourceStart: 7, destinationStart: 57, rangeLength: 4), fertilizerToWater[3])
-        
-        // water-to-light map:
-        // 88 18 7
-        // 18 25 70
-        let waterToLight = seedMaps[3]
-        XCTAssertEqual(2, waterToLight.count)
-        XCTAssertEqual(SeedMap(sourceStart: 18, destinationStart: 88, rangeLength: 7), waterToLight[0])
-        XCTAssertEqual(SeedMap(sourceStart: 25, destinationStart: 18, rangeLength: 70), waterToLight[1])
-
-        // light-to-temperature map:
-        // 45 77 23
-        // 81 45 19
-        // 68 64 13
-        let lightToTemperature = seedMaps[4]
-        XCTAssertEqual(3, lightToTemperature.count)
-        XCTAssertEqual(SeedMap(sourceStart: 77, destinationStart: 45, rangeLength: 23), lightToTemperature[0])
-        XCTAssertEqual(SeedMap(sourceStart: 45, destinationStart: 81, rangeLength: 19), lightToTemperature[1])
-        XCTAssertEqual(SeedMap(sourceStart: 64, destinationStart: 68, rangeLength: 13), lightToTemperature[2])
-
-        // temperature-to-humidity map:
-        // 0 69 1
-        // 1 0 69
-        let temperatureToHumidity = seedMaps[5]
-        XCTAssertEqual(2, temperatureToHumidity.count)
-        XCTAssertEqual(SeedMap(sourceStart: 69, destinationStart: 0, rangeLength: 1), temperatureToHumidity[0])
-        XCTAssertEqual(SeedMap(sourceStart: 0, destinationStart: 1, rangeLength: 69), temperatureToHumidity[1])
-
-        // humidity-to-location map:
-        // 60 56 37
-        // 56 93 4
-        let humidityToLocation = seedMaps[6]
-        XCTAssertEqual(2, humidityToLocation.count)
-        XCTAssertEqual(SeedMap(sourceStart: 56, destinationStart: 60, rangeLength: 37), humidityToLocation[0])
-        XCTAssertEqual(SeedMap(sourceStart: 93, destinationStart: 56, rangeLength: 4), humidityToLocation[1])
-    }
-    
-    func test_part1_sourceToDestination() {
-        // seed-to-soil map:
-        // 50 98 2
-        // 52 50 48
-        let seedToSoilOne = SeedMap(sourceStart: 98, destinationStart: 50, rangeLength: 2)
-        let seedToSoilTwo = SeedMap(sourceStart: 50, destinationStart: 52, rangeLength: 48)
-        
-        // In range -> should map to destination
-        XCTAssertTrue(seedToSoilOne.inRange(98))
-        XCTAssertTrue(seedToSoilOne.inRange(99))
-        XCTAssertEqual(50, seedToSoilOne.destination(98))
-        XCTAssertEqual(51, seedToSoilOne.destination(99))
-        
-        // Not in range -> should return source
-        XCTAssertFalse(seedToSoilOne.inRange(49))
-        XCTAssertFalse(seedToSoilOne.inRange(52))
-        XCTAssertEqual(49, seedToSoilOne.destination(49))
-        XCTAssertEqual(52, seedToSoilOne.destination(52))
-        
-        // In range -> should map to destination
-        XCTAssertTrue(seedToSoilTwo.inRange(50))
-        XCTAssertTrue(seedToSoilTwo.inRange(97))
-        XCTAssertEqual(52, seedToSoilTwo.destination(50))
-        XCTAssertEqual(99, seedToSoilTwo.destination(97))
-        
-        // Not in range -> should return source
-        XCTAssertFalse(seedToSoilTwo.inRange(49))
-        XCTAssertFalse(seedToSoilTwo.inRange(98))
-        XCTAssertEqual(49, seedToSoilTwo.destination(49))
-        XCTAssertEqual(98, seedToSoilTwo.destination(98))
-    }
-    
-    func test_part1_sourceToDestination_Array() {
-        // seed-to-soil map:
-        // 50 98 2
-        // 52 50 48
-        let seedMaps = [
-            SeedMap(sourceStart: 98, destinationStart: 50, rangeLength: 2),
-            SeedMap(sourceStart: 50, destinationStart: 52, rangeLength: 48)
-        ]
-        XCTAssertEqual(81, seedMaps.destination(79))
-        XCTAssertEqual(14, seedMaps.destination(14))
-        XCTAssertEqual(57, seedMaps.destination(55))
-        XCTAssertEqual(13, seedMaps.destination(13))
     }
     
     func test_part1_puzzleInput() {
         XCTAssertEqual(389_056_265, day05_part1(puzzleInput))
     }
     
-//    func test_part2_sampleData() {
-//        XCTAssertEqual(46, day05_part2(sampleData))
-//    }
-    
-    func test_part2_puzzleInput() {
-//        XCTAssertEqual(-1, day05_part2(puzzleInput))
+    func test_part2_sampleData_bruteForce() {
+        XCTAssertEqual(46, day05_part2_bruteForce(sampleData))
     }
     
-    func test_part2_sourceToDestinationRange_Array() {// 52 50 48
-        let seedMap = SeedMap(sourceStart: 82, destinationStart: 50, rangeLength: 2)
-        
-        // No overlap
-        XCTAssertEqual([55..<68], seedMap.destinationRanges(55..<68))
-        
-        // Partial overlap with lower bound (50..<52 mapped from 82..<84)
-        // 79..<93
-        // -> [79..<82, 82..<84, 84..<93]
-        // -> [79..<82, 50..<52, 84..<93] -> sort
-        XCTAssertEqual([50..<52, 79..<82, 84..<93], seedMap.destinationRanges(79..<93))
-        
-        // Contained within range
-        let seedMap2 = SeedMap(sourceStart: 82, destinationStart: 50, rangeLength: 6)
-        XCTAssertEqual([50..<52], seedMap.destinationRanges(82..<84))
-        
-        // Partial overlap with upper bound (50..<56 mapped from 84..<90)
-        // 84..<110
-        // -> [84..<90, 90..<110]
-        // -> [50..<56, 90..<110]
-        XCTAssertEqual([52..<56, 88..<110], seedMap2.destinationRanges(84..<110))
+    func test_part2_sampleData() {
+        XCTAssertEqual(46, day05_part2(sampleData))
     }
     
-    func test_part2_soilRangeMapping() {
-        // seeds: 79 14 55 13
+    func test_part2_rangeProcessing() {
+        let almanac = extractAlmanac(sampleData)
+
+        // input ranges: [79..<93, 55..<68]
         //
         // seed-to-soil map:
         // 50 98 2
         // 52 50 48
-        let seedMaps = [
-            SeedMap(sourceStart: 98, destinationStart: 50, rangeLength: 2),
-            SeedMap(sourceStart: 50, destinationStart: 52, rangeLength: 48)
-        ]
-        XCTAssertEqual([79..<93], seedMaps[0].destinationRanges(79..<93)) // identity map
-        XCTAssertEqual([81..<95], seedMaps[1].destinationRanges(79..<93)) // all in range +2 offset
-        XCTAssertEqual([55..<68], seedMaps[0].destinationRanges(55..<68)) // identity map
-        XCTAssertEqual([57..<70], seedMaps[1].destinationRanges(55..<68)) // all in range +2 offset
-        
-        XCTAssertEqual([79..<93, 81..<95], seedMaps.destinationRanges(79..<93))
-        XCTAssertEqual([55..<68, 57..<70], seedMaps.destinationRanges(55..<68))
-        
-        // [55..<68, 57..<70, 79..<93, 81..<95]
-        // Should merge ranges to minimise input to next stage
-        XCTAssertEqual([55..<70, 79..<95], seedMaps.destinationRanges([79..<93, 55..<68]))
-    }
-    
-    func test_part2_soilToFertilizerMapping() {
-        // input ranges: [55..<70, 79..<95]
+        let soilRanges = almanac.seedToSoil.process([79..<93, 55..<68])
+        XCTAssertEqual([57..<70, 81..<95], soilRanges)
+
+        // input ranges: [57..<70, 81..<95]
         //
         // soil-to-fertilizer map:
         // 0 15 37
         // 37 52 2
         // 39 0 15
-        let seedMaps = [
-            SeedMap(sourceStart: 15, destinationStart: 0, rangeLength: 37),
-            SeedMap(sourceStart: 52, destinationStart: 37, rangeLength: 2),
-            SeedMap(sourceStart: 0, destinationStart: 39, rangeLength: 15)
-        ]
-        XCTAssertEqual([55..<70], seedMaps[0].destinationRanges(55..<70)) // identity map
-        XCTAssertEqual([55..<70], seedMaps[1].destinationRanges(55..<70)) // identity map
-        XCTAssertEqual([55..<70], seedMaps[2].destinationRanges(55..<70)) // identity map
+        let fertilizer = almanac.soilToFertilizer.process(soilRanges)
+        XCTAssertEqual([57..<70, 81..<95], soilRanges)
         
-        XCTAssertEqual([79..<95], seedMaps[0].destinationRanges(79..<95)) // identity map
-        XCTAssertEqual([79..<95], seedMaps[1].destinationRanges(79..<95)) // identity map
-        XCTAssertEqual([79..<95], seedMaps[2].destinationRanges(79..<95)) // identity map
-        
-        XCTAssertEqual([55..<70, 55..<70, 55..<70], seedMaps.destinationRanges(55..<70))
-        XCTAssertEqual([79..<95, 79..<95, 79..<95], seedMaps.destinationRanges(79..<95))
-        
-        XCTAssertEqual([55..<70, 79..<95], seedMaps.destinationRanges([55..<70, 79..<95]))
-    }
-    
-    func test_part2_fertilizerToWaterMapping() {
-        // input ranges: [55..<70, 79..<95]
+        // input ranges: [57..<70, 81..<95]
         //
         // fertilizer-to-water map:
         // 49 53 8
         // 0 11 42
         // 42 0 7
         // 57 7 4
-        let seedMaps = [
-            SeedMap(sourceStart: 53, destinationStart: 49, rangeLength: 8),
-            SeedMap(sourceStart: 11, destinationStart: 0, rangeLength: 42),
-            SeedMap(sourceStart: 0, destinationStart: 42, rangeLength: 7),
-            SeedMap(sourceStart: 7, destinationStart: 57, rangeLength: 4),
-        ]
+        let water = almanac.fertilizerToWater.process(fertilizer)
+        XCTAssertEqual([53..<57, 61..<70, 81..<95], water)
         
-        XCTAssertEqual([51..<70, 79..<95], seedMaps.destinationRanges([55..<70, 79..<95]))
-    }
-    
-    func test_part2_waterToLightMapping() {
-        // input ranges: [51..<70, 79..<95]
+        // input ranges: [53..<57, 61..<70, 81..<95]
         //
         // water-to-light map:
         // 88 18 7
         // 18 25 70
-        let seedMaps = [
-            SeedMap(sourceStart: 18, destinationStart: 88, rangeLength: 7),
-            SeedMap(sourceStart: 25, destinationStart: 18, rangeLength: 70)
-        ]
+        let light = almanac.waterToLight.process(water)
+        XCTAssertEqual([46..<50, 54..<63, 74..<88], light)
         
-        XCTAssertEqual([44..<70, 72..<95], seedMaps.destinationRanges([51..<70, 79..<95]))
-    }
-    
-    func test_part2_lightToTemperatureMapping() {
-        // input ranges: [44..<70, 72..<95]
+        // input ranges: [46..<50, 54..<63, 74..<88]
         //
         // light-to-temperature map:
         // 45 77 23
         // 81 45 19
         // 68 64 13
-        let seedMaps = [
-            SeedMap(sourceStart: 77, destinationStart: 45, rangeLength: 23),
-            SeedMap(sourceStart: 45, destinationStart: 81, rangeLength: 19),
-            SeedMap(sourceStart: 64, destinationStart: 68, rangeLength: 13),
-        ]
+        let temperature = almanac.lightToTemperature.process(light)
+        XCTAssertEqual([45..<56, 78..<81, 82..<86, 90..<99], temperature)
         
-        XCTAssertEqual([44..<63, 64..<100], seedMaps.destinationRanges([44..<70, 72..<95]))
-    }
-    
-    func test_part2_temperatureToHumidityMapping() {
-        // input ranges: [44..<63, 64..<100]
+        // input ranges: [45..<56, 78..<81, 82..<86, 90..<99]
         //
         // temperature-to-humidity map:
         // 0 69 1
         // 1 0 69
-        let seedMaps = [
-            SeedMap(sourceStart: 69, destinationStart: 0, rangeLength: 1),
-            SeedMap(sourceStart: 0, destinationStart: 1, rangeLength: 69)
-        ]
+        let humidity = almanac.temperatureToHumidity.process(temperature)
+        XCTAssertEqual([46..<57, 78..<81, 82..<86, 90..<99], humidity)
         
-        XCTAssertEqual([0..<1, 44..<64, 64..<100], seedMaps.destinationRanges([44..<63, 64..<100]))
-    }
-    
-    func test_part2_humidityToLocationMapping() {
-        // input ranges: [0..<1, 44..<64, 64..<100]
+        // input ranges: [46..<57, 78..<81, 82..<86, 90..<99]
         //
         // humidity-to-location map:
         // 60 56 37
         // 56 93 4
-        let seedMaps = [
-            SeedMap(sourceStart: 56, destinationStart: 60, rangeLength: 37),
-            SeedMap(sourceStart: 93, destinationStart: 56, rangeLength: 4)
-        ]
+        let location = almanac.humidityToLocation.process(humidity)
+        XCTAssertEqual([46..<61, 82..<85, 86..<90, 94..<99], location)
         
-        XCTAssertEqual([0..<1, 44..<60, 60..<100], seedMaps.destinationRanges([0..<1, 44..<64, 64..<100]))
+        XCTAssertEqual(46, location.map(\.lowerBound).min())
     }
     
-    // Find lowest possible offset
-    // -> seed value that yields most negative outcome in batch
-    // Find closest seed to offset (below range or reducing location)
-    // Where are biggest negative offsets?
+    func test_range_extension() {
+        // Fully contained
+        XCTAssertEqual(79..<93, (50..<98).intersection(with: 79..<93))
+        XCTAssertEqual(79..<93, (79..<93).intersection(with: 50..<98))
+        
+        XCTAssertEqual(25..<30, (25..<37).intersection(with: 20..<30))
+        XCTAssertEqual(25..<30, (20..<30).intersection(with: 25..<37))
+        
+        // No overlap
+        XCTAssertNil((10..<20).intersection(with: 20..<30))
+        XCTAssertNil((20..<30).intersection(with: 10..<20))
+    }
+    
+    // Output from Puzzle input for seed ranges
     //
-    // Seed 13, soil 13, fertilizer 52, water 41, light 34, temperature 34, humidity 35, location 35 -> offset +22
-    // Seed 14, soil 14, fertilizer 53, water 49, light 42, temperature 42, humidity 43, location 43 -> offset +29
-    // Seed 55, soil , fertilizer , water , light , temperature , humidity , location
-    // Seed 79, soil 81, fertilizer 81, water 81, light 74, temperature 78, humidity 78, location 82 -> offset +2
-    // Seed 80, soil , fertilizer , water , light , temperature , humidity , location
-    // Seed 81, soil 83, fertilizer , water , light , temperature , humidity , location
-    // Seed 82, soil 84, fertilizer 84, water 84, light 77, temperature 45, humidity 46, location 46 -> offset -36
-    // Seed 83, soil , fertilizer , water , light , temperature , humidity , location
-    func test_part2_extractSeedRanges() {
-        XCTAssertEqual([79 ..< 93, 55 ..< 68], extractSeedRanges("seeds: 79 14 55 13"))
+    // Seeds:   4239267129..<4259728934
+    // Min Location:    896125601
+    //
+    // Seeds:   2775736218..<2828126748
+    // Min Location:    656988148
+    //
+    // Seeds:   3109225152..<3850550524
+    // Min Location:    170926001
+    //
+    // Seeds:   1633502651..<1680409289
+    // Min Location:    170926001
+    //
+    // Seeds:   967445712..<1014538181
+    // Min Location:    170926001
+    //
+    // Seeds:   2354891449..<2592044334
+    // Min Location:    137516820
+    //
+    // Seeds:   2169258488..<2280443291
+    // Min Location:    137516820
+    //
+    // Seeds:   2614747853..<2738486655
+    // Min Location:    137516820
+    //
+    // Seeds:   620098496..<911212652
+    // Min Location:    137516820
+    //
+    // Seeds:   2072253071..<2100364273
+    // Min Location:    137516820
+    func test_part2_puzzleInput() {
+        XCTAssertEqual(137_516_820, day05_part2(puzzleInput))
     }
-    
-    // 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92 <-- max
-    // 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67
-    // process 7 seedMaps eah with multiple rows to find
-    
+
     let puzzleInput = """
     seeds: 4239267129 20461805 2775736218 52390530 3109225152 741325372 1633502651 46906638 967445712 47092469 2354891449 237152885 2169258488 111184803 2614747853 123738802 620098496 291114156 2072253071 28111202
 
