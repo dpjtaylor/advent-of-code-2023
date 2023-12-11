@@ -10,30 +10,33 @@ import Foundation
 public func day08_part1(_ data: String) -> Int {
     let lines = data.components(separatedBy: .newlines)
     let sequence = lines[0].map(Character.init)
-    let mapNodes = extractMapNodes(data)
-    var currentNode = mapNodes.filter { $0.name == "AAA" }.first!
+    let mapNodeLookup = extractMapNodes(data)
+    var currentNode = mapNodeLookup["AAA"]!
     var sequenceIndex = 0
     var steps = 0
     while currentNode.name != "ZZZ" {
-        let path = currentNode.path(for: sequence[sequenceIndex])
+        let pathSelected = currentNode.path(for: sequence[sequenceIndex])
 //        print("Node: \(currentNode.name) = (\(currentNode.leftPath), \(currentNode.rightPath)) => \(sequence[sequenceIndex]) => \(path)")
-        currentNode = mapNodes.filter { $0.name == currentNode.path(for: sequence[sequenceIndex]) }.first!
+        currentNode = mapNodeLookup[pathSelected]!
         sequenceIndex = (sequenceIndex + 1) % sequence.count
         steps += 1
     }
     return steps
 }
 
-func extractMapNodes(_ data: String) -> [MapNode] {
+func extractMapNodes(_ data: String) -> [String: MapNode] {
     let lines = data.components(separatedBy: .newlines).suffix(from: 2)
-    return lines.map { line in
+    var mapNodeLookup = [String: MapNode]() // Dictionary much faster than using array and repeated filtering
+    lines.forEach { line in
         let parts = line.split(separator: " = ")
         let secondPart = parts.last!
             .split(separator: ", ")
             .map { $0.replacingOccurrences(of: "(", with: "") }
             .map { $0.replacingOccurrences(of: ")", with: "") }
-        return MapNode(name: String(parts.first!), leftPath: secondPart.first!, rightPath: secondPart.last!)
+        let name = String(parts.first!)
+        mapNodeLookup[name] = MapNode(name: name, leftPath: secondPart.first!, rightPath: secondPart.last!)
     }
+    return mapNodeLookup
 }
 
 struct MapNode {
