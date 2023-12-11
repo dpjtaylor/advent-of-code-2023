@@ -11,6 +11,8 @@
 		DC3D7DA52B264C71008E07C1 /* Day_06Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC3D7DA42B264C71008E07C1 /* Day_06Tests.swift */; };
 		DC3D7DA72B26ED95008E07C1 /* Day_07.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC3D7DA62B26ED95008E07C1 /* Day_07.swift */; };
 		DC3D7DA92B26EDB4008E07C1 /* Day_07Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC3D7DA82B26EDB4008E07C1 /* Day_07Tests.swift */; };
+		DC3D7DAB2B27175B008E07C1 /* Day_08.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC3D7DAA2B27175B008E07C1 /* Day_08.swift */; };
+		DC3D7DAD2B271767008E07C1 /* Day_08Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC3D7DAC2B271767008E07C1 /* Day_08Tests.swift */; };
 		DC535C172B1A478900227E30 /* AdventOfCode2023.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC535C0E2B1A478900227E30 /* AdventOfCode2023.framework */; };
 		DC535C1D2B1A478900227E30 /* AdventOfCode2023.h in Headers */ = {isa = PBXBuildFile; fileRef = DC535C112B1A478900227E30 /* AdventOfCode2023.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DC535C272B1A47B400227E30 /* Day_01.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC535C262B1A47B400227E30 /* Day_01.swift */; };
@@ -46,6 +48,8 @@
 		DC3D7DA42B264C71008E07C1 /* Day_06Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day_06Tests.swift; sourceTree = "<group>"; };
 		DC3D7DA62B26ED95008E07C1 /* Day_07.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day_07.swift; sourceTree = "<group>"; };
 		DC3D7DA82B26EDB4008E07C1 /* Day_07Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day_07Tests.swift; sourceTree = "<group>"; };
+		DC3D7DAA2B27175B008E07C1 /* Day_08.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day_08.swift; sourceTree = "<group>"; };
+		DC3D7DAC2B271767008E07C1 /* Day_08Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day_08Tests.swift; sourceTree = "<group>"; };
 		DC535C0E2B1A478900227E30 /* AdventOfCode2023.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AdventOfCode2023.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC535C112B1A478900227E30 /* AdventOfCode2023.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AdventOfCode2023.h; sourceTree = "<group>"; };
 		DC535C162B1A478900227E30 /* AdventOfCode2023Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AdventOfCode2023Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -116,6 +120,7 @@
 				DCBA7F792B249BAF00AA72DB /* Day_05.swift */,
 				DC3D7DA22B264C66008E07C1 /* Day_06.swift */,
 				DC3D7DA62B26ED95008E07C1 /* Day_07.swift */,
+				DC3D7DAA2B27175B008E07C1 /* Day_08.swift */,
 			);
 			path = AdventOfCode2023;
 			sourceTree = "<group>";
@@ -131,6 +136,7 @@
 				DCBA7F7B2B249BBF00AA72DB /* Day_05Tests.swift */,
 				DC3D7DA42B264C71008E07C1 /* Day_06Tests.swift */,
 				DC3D7DA82B26EDB4008E07C1 /* Day_07Tests.swift */,
+				DC3D7DAC2B271767008E07C1 /* Day_08Tests.swift */,
 			);
 			path = AdventOfCode2023Tests;
 			sourceTree = "<group>";
@@ -273,6 +279,7 @@
 				DCBA7F742B1E5EA700AA72DB /* Day_04.swift in Sources */,
 				DC535C272B1A47B400227E30 /* Day_01.swift in Sources */,
 				DC3D7DA72B26ED95008E07C1 /* Day_07.swift in Sources */,
+				DC3D7DAB2B27175B008E07C1 /* Day_08.swift in Sources */,
 				DCF3A8032B1B83EC00EEA7A7 /* Day_01_2022.swift in Sources */,
 				DC3D7DA32B264C66008E07C1 /* Day_06.swift in Sources */,
 			);
@@ -287,6 +294,7 @@
 				DCBA7F6A2B1C7BEE00AA72DB /* Day_03Tests.swift in Sources */,
 				DC535C292B1A47CC00227E30 /* Day_01Tests.swift in Sources */,
 				DCBA7F7C2B249BBF00AA72DB /* Day_05Tests.swift in Sources */,
+				DC3D7DAD2B271767008E07C1 /* Day_08Tests.swift in Sources */,
 				DCA85AD82B1B2BF6001269BE /* Day_02Tests.swift in Sources */,
 				DCBA7F722B1E5E8D00AA72DB /* Day_04Tests.swift in Sources */,
 				DCF3A8062B1B846800EEA7A7 /* Day_01_2022_Tests.swift in Sources */,
