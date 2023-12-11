@@ -18,6 +18,14 @@ final class Day07Tests: XCTestCase {
         XCTAssertEqual(241_344_943, day07_part1(puzzleInput))
     }
     
+    func test_part2_sampleData() {
+        XCTAssertEqual(5905, day07_part2(sampleData))
+    }
+    
+    func test_part2_puzzleInput() {
+        XCTAssertEqual(243_101_568, day07_part2(puzzleInput))
+    }
+    
     func test_part1_findCardType() {
         XCTAssertEqual(.fiveOfAKind, CamelCardHand(hand: "AAAAA", bid: 0).type)
         XCTAssertEqual(.fourOfAKind, CamelCardHand(hand: "AA8AA", bid: 0).type)
@@ -26,6 +34,27 @@ final class Day07Tests: XCTestCase {
         XCTAssertEqual(.twoPair, CamelCardHand(hand: "23432", bid: 0).type)
         XCTAssertEqual(.onePair, CamelCardHand(hand: "A23A4", bid: 0).type)
         XCTAssertEqual(.highCard, CamelCardHand(hand: "23456", bid: 0).type)
+    }
+    
+    func test_part2_findCardType_jokerActive() {
+        // 1 J
+        XCTAssertEqual(.fiveOfAKind, CamelCardHand(hand: "AAAAJ", bid: 0, isJokerActive: true).type)
+        XCTAssertEqual(.fourOfAKind, CamelCardHand(hand: "AAABJ", bid: 0, isJokerActive: true).type)
+        XCTAssertEqual(.fullHouse, CamelCardHand(hand: "AABBJ", bid: 0, isJokerActive: true).type)
+        XCTAssertEqual(.threeOfAKind, CamelCardHand(hand: "JBBCD", bid: 0, isJokerActive: true).type)
+        XCTAssertEqual(.onePair, CamelCardHand(hand: "JABCD", bid: 0, isJokerActive: true).type)
+        
+        // 2 J
+        XCTAssertEqual(.fiveOfAKind, CamelCardHand(hand: "AAAJJ", bid: 0, isJokerActive: true).type)
+        XCTAssertEqual(.fourOfAKind, CamelCardHand(hand: "AAJJB", bid: 0, isJokerActive: true).type)
+        XCTAssertEqual(.threeOfAKind, CamelCardHand(hand: "JJABC", bid: 0, isJokerActive: true).type)
+        
+        // 3 J
+        XCTAssertEqual(.fiveOfAKind, CamelCardHand(hand: "JJJXX", bid: 0, isJokerActive: true).type)
+        XCTAssertEqual(.fourOfAKind, CamelCardHand(hand: "JJJXY", bid: 0, isJokerActive: true).type)
+        
+        // 4 J
+        XCTAssertEqual(.fiveOfAKind, CamelCardHand(hand: "JJJJY", bid: 0, isJokerActive: true).type)
     }
     
     func test_part1_cardSorting() {
