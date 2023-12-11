@@ -22,6 +22,15 @@ final class Day08Tests: XCTestCase {
         XCTAssertEqual(21_883, day08_part1(puzzleInput))
     }
     
+    // Part 2 - start at ever node ending eith A and follow all paths at same time until they all simultaneously end with Z
+    func test_part2_sampleData() {
+        XCTAssertEqual(6, day08_part2(sampleDataPart2))
+    }
+    
+    func test_part2_puzzleInput() {
+        XCTAssertEqual(12_833_235_391_111, day08_part2(puzzleInput))
+    }
+    
     let sampleData1 = """
     RL
 
@@ -40,6 +49,19 @@ final class Day08Tests: XCTestCase {
     AAA = (BBB, BBB)
     BBB = (AAA, ZZZ)
     ZZZ = (ZZZ, ZZZ)
+    """
+    
+    let sampleDataPart2 = """
+    LR
+
+    11A = (11B, XXX)
+    11B = (XXX, 11Z)
+    11Z = (11B, XXX)
+    22A = (22B, XXX)
+    22B = (22C, 22C)
+    22C = (22Z, 22Z)
+    22Z = (22B, 22B)
+    XXX = (XXX, XXX)
     """
     
     let puzzleInput = """
