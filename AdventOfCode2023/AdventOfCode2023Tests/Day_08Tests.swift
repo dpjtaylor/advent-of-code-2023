@@ -22,7 +22,7 @@ final class Day08Tests: XCTestCase {
         XCTAssertEqual(21_883, day08_part1(puzzleInput))
     }
     
-    // Part 2 - start at ever node ending eith A and follow all paths at same time until they all simultaneously end with Z
+    // Part 2 - start at every node ending either A and follow all paths at same time until they all simultaneously end with Z
     func test_part2_sampleData() {
         XCTAssertEqual(6, day08_part2(sampleDataPart2))
     }

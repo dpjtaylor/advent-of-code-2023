@@ -61,7 +61,7 @@ public func sumGearRatios(_ data: String) -> Int {
         .reduce(0, +) // sum up values in [Int]
 }
 
-private func extractComponents(_ data: String) -> ([Part], [Symbol]){
+private func extractComponents(_ data: String) -> ([Part], [Symbol]) {
     // Create [[Character]] multidimensional array to use as an x, y grid
     let matrix = data.components(separatedBy: .newlines)
         .map(Array.init)
