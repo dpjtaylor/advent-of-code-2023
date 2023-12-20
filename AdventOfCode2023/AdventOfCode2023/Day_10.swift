@@ -18,6 +18,1209 @@ public func day10_part1v2(_ data: String) -> Int {
     return tiles.loopSteps() / 2
 }
 
+public func day10_part1v3(_ data: String) -> Int {
+    let tiles = extractPipeTiles2(data)
+    return tiles.loopStepsBreadthFirstSearch().count / 2
+}
+
+public func day10_part2(_ data: String) -> Int {
+    let tiles = extractPipeTiles2(data)
+    let loop = tiles.loopStepsBreadthFirstSearch()
+    var matrix = data.components(separatedBy: .newlines)
+        .map(Array.init)
+    
+    let grid = data.components(separatedBy: .newlines)
+    var doubleRes = [String]()
+    for (y, row) in grid.enumerated() {
+        var line1 = ""
+        var line2 = ""
+        for (x, char) in row.enumerated() {
+            var char = char
+            // Strip out non-loop chars to simplify flood fill
+            if !loop.contains(where: { $0.position == GridPoint(x: x, y: y) }) {
+                char = "."
+            }
+            if char == "S" {
+                char = loop.filter { $0.position == GridPoint(x: x, y: y) }.first!.type.rawValue
+            }
+            if let type = TileType(rawValue: char) {
+                line1 += type.doubleResLine1
+                line2 += type.doubleResLine2
+            } else {
+                line1 += ".."
+                line2 += ".."
+            }
+        }
+        doubleRes.append(line1)
+        doubleRes.append(line2)
+    }
+    
+    print("👻👻👻")
+    for row in doubleRes {
+        for char in row {
+            print(char, terminator: " ")
+        }
+        print(" ")
+    }
+    print(" ")
+//    grid.forEach { line in
+//        var line1 = ""
+//        var line2 = ""
+//        line.forEach { char in
+////            if loop.filter { $0.position }
+//            // if loop !contains tile then replace with dot
+//            if let type = TileType(rawValue: char) {
+//                line1 += type.doubleResLine1
+//                line2 += type.doubleResLine2
+//            } else {
+//                line1 += ".."
+//                line2 += ".."
+//            }
+//        }
+//        doubleRes.append(line1)
+//        doubleRes.append(line2)
+////        print(line1)
+////        print(line2)
+//    }
+    
+    // Flood fill
+    var doubleGrid = doubleRes.map(Array.init)
+    let yMax = doubleGrid.count - 1
+    let xMax = doubleGrid[0].count - 1
+    for (y, row) in doubleGrid.enumerated().reversed() {
+        for (x, char) in row.enumerated() {
+            // if adjacent is "$" and current is "." then flood to this char
+            // if adjacent char is out of bounds we consider it a "$"
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if y < yMax {
+                let charBelow = doubleGrid[y + 1][x]
+                if charBelow == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+        for (x, char) in row.enumerated().reversed() {
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if x < xMax {
+                let charRight = doubleGrid[y][x + 1]
+                if charRight == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+    }
+    for (y, row) in doubleGrid.enumerated() {
+        for (x, char) in row.enumerated().reversed() {
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if x < xMax {
+                let charRight = doubleGrid[y][x + 1]
+                if charRight == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+        for (x, char) in row.enumerated() {
+            // if adjacent is "$" and current is "." then flood to this char
+            // if adjacent char is out of bounds we consider it a "$"
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if y > 0 {
+                let charAbove = doubleGrid[y - 1][x]
+                if charAbove == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+            
+            if x > 0 {
+                let charLeft = doubleGrid[y][x - 1]
+                if charLeft == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+    }
+    
+    
+    // --------------
+    for (y, row) in doubleGrid.enumerated().reversed() {
+        for (x, char) in row.enumerated() {
+            // if adjacent is "$" and current is "." then flood to this char
+            // if adjacent char is out of bounds we consider it a "$"
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if y < yMax {
+                let charBelow = doubleGrid[y + 1][x]
+                if charBelow == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+        for (x, char) in row.enumerated().reversed() {
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if x < xMax {
+                let charRight = doubleGrid[y][x + 1]
+                if charRight == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+    }
+    for (y, row) in doubleGrid.enumerated() {
+        for (x, char) in row.enumerated().reversed() {
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if x < xMax {
+                let charRight = doubleGrid[y][x + 1]
+                if charRight == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+        for (x, char) in row.enumerated() {
+            // if adjacent is "$" and current is "." then flood to this char
+            // if adjacent char is out of bounds we consider it a "$"
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if y > 0 {
+                let charAbove = doubleGrid[y - 1][x]
+                if charAbove == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+            
+            if x > 0 {
+                let charLeft = doubleGrid[y][x - 1]
+                if charLeft == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+    }
+    // --------------
+    // Flood fill
+    for (y, row) in doubleGrid.enumerated().reversed() {
+        for (x, char) in row.enumerated() {
+            // if adjacent is "$" and current is "." then flood to this char
+            // if adjacent char is out of bounds we consider it a "$"
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if y < yMax {
+                let charBelow = doubleGrid[y + 1][x]
+                if charBelow == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+        for (x, char) in row.enumerated().reversed() {
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if x < xMax {
+                let charRight = doubleGrid[y][x + 1]
+                if charRight == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+    }
+    for (y, row) in doubleGrid.enumerated() {
+        for (x, char) in row.enumerated().reversed() {
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if x < xMax {
+                let charRight = doubleGrid[y][x + 1]
+                if charRight == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+        for (x, char) in row.enumerated() {
+            // if adjacent is "$" and current is "." then flood to this char
+            // if adjacent char is out of bounds we consider it a "$"
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if y > 0 {
+                let charAbove = doubleGrid[y - 1][x]
+                if charAbove == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+            
+            if x > 0 {
+                let charLeft = doubleGrid[y][x - 1]
+                if charLeft == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+    }
+    
+    
+    // --------------
+    for (y, row) in doubleGrid.enumerated().reversed() {
+        for (x, char) in row.enumerated() {
+            // if adjacent is "$" and current is "." then flood to this char
+            // if adjacent char is out of bounds we consider it a "$"
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if y < yMax {
+                let charBelow = doubleGrid[y + 1][x]
+                if charBelow == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+        for (x, char) in row.enumerated().reversed() {
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if x < xMax {
+                let charRight = doubleGrid[y][x + 1]
+                if charRight == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+    }
+    for (y, row) in doubleGrid.enumerated() {
+        for (x, char) in row.enumerated().reversed() {
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if x < xMax {
+                let charRight = doubleGrid[y][x + 1]
+                if charRight == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+        for (x, char) in row.enumerated() {
+            // if adjacent is "$" and current is "." then flood to this char
+            // if adjacent char is out of bounds we consider it a "$"
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if y > 0 {
+                let charAbove = doubleGrid[y - 1][x]
+                if charAbove == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+            
+            if x > 0 {
+                let charLeft = doubleGrid[y][x - 1]
+                if charLeft == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+    }
+    // --------------
+    // Flood fill
+    for (y, row) in doubleGrid.enumerated().reversed() {
+        for (x, char) in row.enumerated() {
+            // if adjacent is "$" and current is "." then flood to this char
+            // if adjacent char is out of bounds we consider it a "$"
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if y < yMax {
+                let charBelow = doubleGrid[y + 1][x]
+                if charBelow == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+        for (x, char) in row.enumerated().reversed() {
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if x < xMax {
+                let charRight = doubleGrid[y][x + 1]
+                if charRight == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+    }
+    for (y, row) in doubleGrid.enumerated() {
+        for (x, char) in row.enumerated().reversed() {
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if x < xMax {
+                let charRight = doubleGrid[y][x + 1]
+                if charRight == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+        for (x, char) in row.enumerated() {
+            // if adjacent is "$" and current is "." then flood to this char
+            // if adjacent char is out of bounds we consider it a "$"
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if y > 0 {
+                let charAbove = doubleGrid[y - 1][x]
+                if charAbove == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+            
+            if x > 0 {
+                let charLeft = doubleGrid[y][x - 1]
+                if charLeft == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+    }
+    
+    
+    // --------------
+    for (y, row) in doubleGrid.enumerated().reversed() {
+        for (x, char) in row.enumerated() {
+            // if adjacent is "$" and current is "." then flood to this char
+            // if adjacent char is out of bounds we consider it a "$"
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if y < yMax {
+                let charBelow = doubleGrid[y + 1][x]
+                if charBelow == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+        for (x, char) in row.enumerated().reversed() {
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if x < xMax {
+                let charRight = doubleGrid[y][x + 1]
+                if charRight == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+    }
+    for (y, row) in doubleGrid.enumerated() {
+        for (x, char) in row.enumerated().reversed() {
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if x < xMax {
+                let charRight = doubleGrid[y][x + 1]
+                if charRight == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+        for (x, char) in row.enumerated() {
+            // if adjacent is "$" and current is "." then flood to this char
+            // if adjacent char is out of bounds we consider it a "$"
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if y > 0 {
+                let charAbove = doubleGrid[y - 1][x]
+                if charAbove == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+            
+            if x > 0 {
+                let charLeft = doubleGrid[y][x - 1]
+                if charLeft == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+    }
+    // --------------
+    // Flood fill
+    for (y, row) in doubleGrid.enumerated().reversed() {
+        for (x, char) in row.enumerated() {
+            // if adjacent is "$" and current is "." then flood to this char
+            // if adjacent char is out of bounds we consider it a "$"
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if y < yMax {
+                let charBelow = doubleGrid[y + 1][x]
+                if charBelow == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+        for (x, char) in row.enumerated().reversed() {
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if x < xMax {
+                let charRight = doubleGrid[y][x + 1]
+                if charRight == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+    }
+    for (y, row) in doubleGrid.enumerated() {
+        for (x, char) in row.enumerated().reversed() {
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if x < xMax {
+                let charRight = doubleGrid[y][x + 1]
+                if charRight == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+        for (x, char) in row.enumerated() {
+            // if adjacent is "$" and current is "." then flood to this char
+            // if adjacent char is out of bounds we consider it a "$"
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if y > 0 {
+                let charAbove = doubleGrid[y - 1][x]
+                if charAbove == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+            
+            if x > 0 {
+                let charLeft = doubleGrid[y][x - 1]
+                if charLeft == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+    }
+    
+    
+    // --------------
+    for (y, row) in doubleGrid.enumerated().reversed() {
+        for (x, char) in row.enumerated() {
+            // if adjacent is "$" and current is "." then flood to this char
+            // if adjacent char is out of bounds we consider it a "$"
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if y < yMax {
+                let charBelow = doubleGrid[y + 1][x]
+                if charBelow == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+        for (x, char) in row.enumerated().reversed() {
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if x < xMax {
+                let charRight = doubleGrid[y][x + 1]
+                if charRight == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+    }
+    for (y, row) in doubleGrid.enumerated() {
+        for (x, char) in row.enumerated().reversed() {
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if x < xMax {
+                let charRight = doubleGrid[y][x + 1]
+                if charRight == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+        for (x, char) in row.enumerated() {
+            // if adjacent is "$" and current is "." then flood to this char
+            // if adjacent char is out of bounds we consider it a "$"
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if y > 0 {
+                let charAbove = doubleGrid[y - 1][x]
+                if charAbove == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+            
+            if x > 0 {
+                let charLeft = doubleGrid[y][x - 1]
+                if charLeft == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+    }
+    // --------------
+    // --------------
+    for (y, row) in doubleGrid.enumerated().reversed() {
+        for (x, char) in row.enumerated() {
+            // if adjacent is "$" and current is "." then flood to this char
+            // if adjacent char is out of bounds we consider it a "$"
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if y < yMax {
+                let charBelow = doubleGrid[y + 1][x]
+                if charBelow == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+        for (x, char) in row.enumerated().reversed() {
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if x < xMax {
+                let charRight = doubleGrid[y][x + 1]
+                if charRight == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+    }
+    for (y, row) in doubleGrid.enumerated() {
+        for (x, char) in row.enumerated().reversed() {
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if x < xMax {
+                let charRight = doubleGrid[y][x + 1]
+                if charRight == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+        for (x, char) in row.enumerated() {
+            // if adjacent is "$" and current is "." then flood to this char
+            // if adjacent char is out of bounds we consider it a "$"
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if y > 0 {
+                let charAbove = doubleGrid[y - 1][x]
+                if charAbove == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+            
+            if x > 0 {
+                let charLeft = doubleGrid[y][x - 1]
+                if charLeft == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+    }
+    // --------------
+    // --------------
+    for (y, row) in doubleGrid.enumerated().reversed() {
+        for (x, char) in row.enumerated() {
+            // if adjacent is "$" and current is "." then flood to this char
+            // if adjacent char is out of bounds we consider it a "$"
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if y < yMax {
+                let charBelow = doubleGrid[y + 1][x]
+                if charBelow == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+        for (x, char) in row.enumerated().reversed() {
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if x < xMax {
+                let charRight = doubleGrid[y][x + 1]
+                if charRight == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+    }
+    for (y, row) in doubleGrid.enumerated() {
+        for (x, char) in row.enumerated().reversed() {
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if x < xMax {
+                let charRight = doubleGrid[y][x + 1]
+                if charRight == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+        for (x, char) in row.enumerated() {
+            // if adjacent is "$" and current is "." then flood to this char
+            // if adjacent char is out of bounds we consider it a "$"
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if y > 0 {
+                let charAbove = doubleGrid[y - 1][x]
+                if charAbove == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+            
+            if x > 0 {
+                let charLeft = doubleGrid[y][x - 1]
+                if charLeft == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+    }
+    // --------------
+    // --------------
+    for (y, row) in doubleGrid.enumerated().reversed() {
+        for (x, char) in row.enumerated() {
+            // if adjacent is "$" and current is "." then flood to this char
+            // if adjacent char is out of bounds we consider it a "$"
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if y < yMax {
+                let charBelow = doubleGrid[y + 1][x]
+                if charBelow == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+        for (x, char) in row.enumerated().reversed() {
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if x < xMax {
+                let charRight = doubleGrid[y][x + 1]
+                if charRight == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+    }
+    for (y, row) in doubleGrid.enumerated() {
+        for (x, char) in row.enumerated().reversed() {
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if x < xMax {
+                let charRight = doubleGrid[y][x + 1]
+                if charRight == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+        for (x, char) in row.enumerated() {
+            // if adjacent is "$" and current is "." then flood to this char
+            // if adjacent char is out of bounds we consider it a "$"
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if y > 0 {
+                let charAbove = doubleGrid[y - 1][x]
+                if charAbove == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+            
+            if x > 0 {
+                let charLeft = doubleGrid[y][x - 1]
+                if charLeft == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+    }
+    // --------------
+    // --------------
+    for (y, row) in doubleGrid.enumerated().reversed() {
+        for (x, char) in row.enumerated() {
+            // if adjacent is "$" and current is "." then flood to this char
+            // if adjacent char is out of bounds we consider it a "$"
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if y < yMax {
+                let charBelow = doubleGrid[y + 1][x]
+                if charBelow == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+        for (x, char) in row.enumerated().reversed() {
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if x < xMax {
+                let charRight = doubleGrid[y][x + 1]
+                if charRight == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+    }
+    for (y, row) in doubleGrid.enumerated() {
+        for (x, char) in row.enumerated().reversed() {
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if x < xMax {
+                let charRight = doubleGrid[y][x + 1]
+                if charRight == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+        for (x, char) in row.enumerated() {
+            // if adjacent is "$" and current is "." then flood to this char
+            // if adjacent char is out of bounds we consider it a "$"
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if y > 0 {
+                let charAbove = doubleGrid[y - 1][x]
+                if charAbove == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+            
+            if x > 0 {
+                let charLeft = doubleGrid[y][x - 1]
+                if charLeft == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+    }
+    // --------------
+    // --------------
+    for (y, row) in doubleGrid.enumerated().reversed() {
+        for (x, char) in row.enumerated() {
+            // if adjacent is "$" and current is "." then flood to this char
+            // if adjacent char is out of bounds we consider it a "$"
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if y < yMax {
+                let charBelow = doubleGrid[y + 1][x]
+                if charBelow == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+        for (x, char) in row.enumerated().reversed() {
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if x < xMax {
+                let charRight = doubleGrid[y][x + 1]
+                if charRight == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+    }
+    for (y, row) in doubleGrid.enumerated() {
+        for (x, char) in row.enumerated().reversed() {
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if x < xMax {
+                let charRight = doubleGrid[y][x + 1]
+                if charRight == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+        for (x, char) in row.enumerated() {
+            // if adjacent is "$" and current is "." then flood to this char
+            // if adjacent char is out of bounds we consider it a "$"
+            if char != "." { continue }
+            
+            // Pick up the flood from outside the bounds
+            if y == 0 || x == 0 || y == yMax || x == xMax {
+                // Consider above outside the loop
+                doubleGrid[y][x] = "$"
+            }
+            
+            if y > 0 {
+                let charAbove = doubleGrid[y - 1][x]
+                if charAbove == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+            
+            if x > 0 {
+                let charLeft = doubleGrid[y][x - 1]
+                if charLeft == "$" {
+                    doubleGrid[y][x] = "$"
+                }
+            }
+        }
+    }
+    // --------------
+    print("🎃🎃🎃")
+    for row in doubleGrid {
+        for char in row {
+            print(char, terminator: " ")
+        }
+        print(" ")
+    }
+    print(" ")
+    
+    var squished = [[Character]]()
+    doubleGrid.enumerated().forEach { (y, line) in
+        var squishedRow = [Character]()
+        line.enumerated().forEach { (x, char) in
+            if x % 2 == 0 {
+                print("x: \(x), y: \(y)")
+                squishedRow.append(char)
+            }
+        }
+        if y % 2 == 0 {        
+            squished.append(squishedRow)
+        }
+    }
+    
+    print("🎃🎃🎃")
+    for row in squished {
+        for char in row {
+            print(char, terminator: " ")
+        }
+        print(" ")
+    }
+    print(" ")
+    let count = squished.flatMap({ $0.map { $0 } } ).filter { $0 == "." }.count
+    print("dot count: \(count)")
+    print("")
+//    var doubledGrid = [[Character]]()
+//    for (y, row) in matrix.enumerated() {
+//        for (x, _) in row.enumerated() {
+//            if let tile = tiles.filter( { $0.position.x == x && $0.position.y == y } ).first {
+//                
+//                if loop.contains(tile) {
+//                    matrix[y][x] = "#"
+//                    print("#", terminator: " ")
+//                } else {
+//                    matrix[y][x] = "."
+//                    // Are we inside or outside?
+//                    print(".", terminator: " ")
+//                }
+//            } else {
+//                matrix[y][x] = "."
+//                print(".", terminator: " ")
+//            }
+//        }
+//        print(" ")
+//    }
+    // Flood fill outside and change "." to "$" - need to know tile and neighbours - up, down, left, right
+    // Count remaining dots
+    
+//    for row in matrix {
+//        for char in row {
+//            print(char, terminator: " ")
+//        }
+//        print(" ")
+//    }
+    
+//    var tiles2 = [Tile]()
+//    for tile in tiles {
+//        if loop.contains(tile) {
+//            tiles2.append(Tile(type: .vertical, position: tile.position))
+//        } else {
+//            tiles2.append(Tile(type: .horizontal, position: tile.position))
+//        }
+//    }
+//    for (index, tile) in tiles.enumerated() {
+//        if loop.contains(tile) { continue }
+//    }
+    return count
+}
+
 enum Direction: Equatable, CaseIterable {
     case up
     case down
@@ -25,7 +1228,7 @@ enum Direction: Equatable, CaseIterable {
     case right
 }
 
-enum TileType: Character, CaseIterable {
+enum TileType: Character, Equatable, CaseIterable {
     case vertical = "|"
     case horizontal = "-"
     case lbend = "L"
@@ -66,9 +1269,43 @@ enum TileType: Character, CaseIterable {
             [.left, .up]
         }
     }
+    
+    var doubleResLine1: String {
+        switch self {
+        case .vertical:
+            "|."
+        case .horizontal:
+            "--"
+        case .lbend:
+            "L-"
+        case .jbend:
+            "J."
+        case .sevenbend:
+            "7."
+        case .fbend:
+            "F-"
+        }
+    }
+    
+    var doubleResLine2: String {
+        switch self {
+        case .vertical:
+            "|."
+        case .horizontal:
+            ".."
+        case .lbend:
+            ".."
+        case .jbend:
+            ".."
+        case .sevenbend:
+            "|."
+        case .fbend:
+            "|."
+        }
+    }
 }
 
-struct GridPoint: Equatable {
+struct GridPoint: Equatable, Hashable {
     let x: Int
     let y: Int
     
@@ -104,9 +1341,9 @@ struct GridPoint: Equatable {
     }
 }
 
-struct Tile {
+struct Tile: Equatable {
     let type: TileType
-    let position: GridPoint // TODO: Rename point
+    let position: GridPoint
     let isStartTile: Bool
     
     init(type: TileType, position: GridPoint, isStartTile: Bool = false) {
@@ -121,6 +1358,25 @@ struct Tile {
 }
 
 extension Array where Element == Tile {
+    func loopStepsBreadthFirstSearch() -> [Tile] {
+        var visited = [Tile]()
+        var toVisit = [first(where: \.isStartTile)!]
+        
+        repeat {
+            let tile = toVisit.removeFirst()
+            visited.append(tile)
+            let next = filter { tile.exitPoints.contains($0.position) }
+            next.forEach { nextTile in
+                if !visited.contains(nextTile) {
+                    toVisit.append(nextTile)
+                }
+            }
+            
+        } while !toVisit.isEmpty
+        
+        return visited
+    }
+    
     func loopSteps() -> Int {
         let startTile = first(where: \.isStartTile)!
         
@@ -129,8 +1385,7 @@ extension Array where Element == Tile {
         var previousTile = startTile
         var stepCount = 0
         while !completedLoop {
-            let neighbours = filter { currentTile.position.neighbours.contains($0.position) }
-            let nextTiles = neighbours.filter { currentTile.exitPoints.contains($0.position) }
+            let nextTiles = filter { currentTile.exitPoints.contains($0.position) }
             assert(nextTiles.count == 2)
             let nextTilesExcludingCurrent = nextTiles.filter { $0.position != previousTile.position }
             if currentTile.isStartTile {
@@ -270,26 +1525,20 @@ extension Array where Element == PipeTile {
     func biggestLoop() -> Int {
         let startTile = first(where: \.isStartTile)!
         let nextTiles = startTile.next(allTiles: self, ignorePosition: startTile.position)
-//        let pathOne = nextTiles[0]
-//        let pathTwo = nextTiles[1]
         
         var completedLoop = false
-//        var loopOne = [startTile]
         var steps1 = 0
         var previousTile = startTile
         var currentTile = startTile
         while !completedLoop {
-//            let next = loopOne.last!.next(allTiles: self, ignorePosition: previousTile.position).first!
             let next = currentTile.next(allTiles: self, ignorePosition: previousTile.position).first!
             previousTile = currentTile
             currentTile = next
             steps1 += 1
-//            loopOne.append(next)
             if next.isStartTile {
                 completedLoop = true
             }
             print("next: \(next.x), \(next.y), \(next.type.rawValue)")
-//            print("Steps: \(loopOne.count)")
         }
         print("🎃🎃🎃 Completed loop 1") // TODO: Only need to take one loop
 
@@ -297,14 +1546,11 @@ extension Array where Element == PipeTile {
         var steps2 = 0
         previousTile = startTile
         currentTile = startTile
-//        var loopTwo = [startTile]
         while !completedLoop {
-//            let next = loopTwo.last!.next(allTiles: self, ignorePosition: previousTile.position).last!
             let next = currentTile.next(allTiles: self, ignorePosition: previousTile.position).last!
             previousTile = currentTile //loopTwo.last!
             currentTile = next
             steps2 += 1
-//            loopTwo.append(next)
             if next.isStartTile {
                 completedLoop = true
             }
@@ -327,7 +1573,6 @@ private func printMatrix(_ matrix: [[Character]]) {
         print(" ")
     }
 }
-
 
 enum CompassDirection: CaseIterable {
     case north
@@ -395,13 +1640,6 @@ enum PipeTileType: Character, CaseIterable {
             return [.east, .west]
         case .northAndEastBend, .northAndWestBend, .southAndWestBend, .southAndEastBend:
             return CompassDirection.allCases.filter { !directions.contains($0) }
-//            [.south, .west]
-//        case .northAndWestBend:
-//            return [.south, .east]
-//        case .southAndWestBend:
-//            return [.north, .east]
-//        case .southAndEastBend:
-//            return [.north, .west]
         }
     }
 }
@@ -409,9 +1647,6 @@ enum PipeTileType: Character, CaseIterable {
 struct GridPosition: Equatable {
     let x: Int
     let y: Int
-    
-//    isOneStep(from: position)
-//    relativeDirection(from: )
     
     // Nil means we can't go there
     func direction(to tile: PipeTile) -> CompassDirection? {
@@ -434,10 +1669,6 @@ struct GridPosition: Equatable {
     func isOneStepEast(of position: GridPosition) -> Bool {
         position.x == x + 1
     }
-    
-//    func direction(from: GridPosition) -> CompassDirection {
-//        
-//    }
     
     func neighbours(xMax: Int, yMax: Int) -> [GridPosition] {
         neighbours.filter {
@@ -507,6 +1738,6 @@ struct PipeTile {
             case .west:
                 return position.stepWest
             }
-        }//.filter { $0 != position  } // ignore entry path
+        }
     }
 }
